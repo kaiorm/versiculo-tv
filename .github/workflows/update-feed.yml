@@ -1,0 +1,31 @@
+name: Atualizar Versículo do Dia
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # Executa todo dia às 03h UTC (00h Brasília)
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout do código
+      uses: actions/checkout@v3
+
+    - name: Instalar Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Rodar script de atualização
+      run: |
+        python atualizar_index.py
+
+    - name: Commit e push
+      run: |
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+        git add index.html
+        git commit -m "Atualiza versículo do dia" || echo "Sem alterações"
+        git push
